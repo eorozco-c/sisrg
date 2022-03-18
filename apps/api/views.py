@@ -3,7 +3,7 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from rest_framework import viewsets, permissions
 
 from apps.clientes.models import Cliente, Sitios_cliente
-from .serializers import ClienteModelSerializer
+from .serializers import ClienteModelSerializer, Sitios_clienteModelSerializer
 # # Create your views here.
 
 class ClienteViewSet(viewsets.ModelViewSet):
@@ -16,3 +16,18 @@ class ClienteViewSet(viewsets.ModelViewSet):
         queryset = Cliente.objects.filter(empresa=self.request.user.empresa)
         return queryset
 
+    def perform_create(self, serializer):
+        serializer.save(empresa=self.request.user.empresa)
+
+class SitioclienteViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Sitios_cliente.objects.all()
+    serializer_class = Sitios_clienteModelSerializer
+
+    def get_queryset(self):
+        queryset = Sitios_cliente.objects.filter(empresa=self.request.user.empresa)
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(empresa=self.request.user.empresa)

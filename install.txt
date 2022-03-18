@@ -1,0 +1,150 @@
+mkdir /usr/telectronic
+
+setenforce 0
+sed -i 's/\(^SELINUX=\).*/\SELINUX=permissive/' /etc/selinux/config
+
+sudo yum -y update
+sudo yum  -y install epel-release
+
+reboot
+
+sudo yum -y install libedit-devel sqlite-devel psmisc gmime-devel ncurses-devel libtermcap-devel sox newt-devel libxml2-devel libtiff-devel audiofile-devel gtk2-devel uuid-devel libtool libuuid-devel subversion kernel-devel kernel-devel-$(uname -r) git subversion kernel-devel crontabs cronie cronie-anacron wget vim openssl-devel
+sudo yum install antiword ntfs-3g postfix tftp-server xinetd syslinux ntp gcc gcc-c++ 
+sudo yum install -y wget
+
+============================================================|
+
+sudo tee /etc/yum.repos.d/MariaDB.repo<<EOF 
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.4/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+EOF
+
+sudo yum makecache fast
+
+yum -y install MariaDB-server MariaDB-client
+yum erase MariaDB-devel.x86_64
+
+wget https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
+
+rpm -Uvh mysql80-community-release-el7-5.noarch.rpm
+
+yum install mysql-community-devel.x86_64
+
+systemctl enable --now mariadb
+
+mysql_secure_installation
+
+### IF ERROR: mysql_upgrade -u root
+
+mysql -p
+Enter Password:
+
+GRANT USAGE ON *.* TO 'root'@'%' IDENTIFIED BY 'T3l3ctr0n1c2022.,!';
+GRANT ALL privileges ON *.* TO 'root'@'%' IDENTIFIED BY 'T3l3ctr0n1c2022.,!';
+FLUSH PRIVILEGES;
+
+CREATE DATABASE sgg;
+
+quit;
+
+service mariadb restart
+
+============================================================================
+
+sudo yum install python3 python3-setuptools python3-devel MySQL-python  python3-devel git nginx
+
+mkdir /var/www
+cd /var/www
+
+python3 -m venv venv
+source venv/bin/activate
+git clone https://github.com/eorozco-c/sisrg.git
+mv sisrg/ ./SGG
+pip install --upgrade pip
+cd SGG
+pip install -r requirements.txt
+vim .env
+
+#
+PROJECT_KEY = 'django-insecure-epwsyuwc9^$a^%%)0e)k9cjso!4c$-5#lxdi5%hcjp0h4fk_hs'
+EMAIL_HOST_USER = 'user gmail here'
+EMAIL_HOST_PASSWORD = 'pass gmail here'
+DB_HOST = 'localhost'
+DB_USER = 'root'
+DB_PASSWORD = 'admin'
+#
+
+python manage.py makemigrations && python manage.py migrate
+python manage.py collectstatic
+
+vim /etc/systemd/system/gunicorn.service
+
+#
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/var/www/SGG
+ExecStart=/var/www/venv/bin/gunicorn --workers 3 --bind unix:/var/www/SGG/SGG.sock SGG.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+#
+
+systemctl daemon-reload
+systemctl status gunicorn
+systemctl enable gunicorn
+systemctl start gunicorn
+systemctl status gunicorn
+
+
+vim /etc/nginx/nginx.conf
+
+#
+    server {
+        listen 80;
+        server_name sgg.telectronic.com;
+
+        location /static/ {
+                root /var/www/SGG;
+        }
+        location /media/ {
+                root /var/www/SGG;
+        }
+
+        location / {
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_pass http://unix:/var/www/SGG/SGG.sock;
+        }
+    }
+#
+
+systemctl enable nginx
+systemctl start nginx
+systemctl status nginx
+
+============================================================================
+
+
+chkconfig ntpd on 
+chkconfig nginx on 
+chkconfig gunicorn on 
+chkconfig mariadb on 
+
+============================================================================
+
+DETENER FIREWALL.
+
+chkconfig firewalld on
+systemctl enable firewalld
+service firewalld stop
+chkconfig firewalld off

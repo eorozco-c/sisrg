@@ -37,16 +37,12 @@ class FormularioSitioCliente(forms.ModelForm):
 
     class Meta:
         model = Sitios_cliente
-        fields = ['nombre', 'direccion', 'telefono', 'email', 'encargado', 'cliente']
+        fields = ['nombre', 'direccion', 'telefono', 'email', 'encargado']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Row(
-                Column('cliente', css_class='form-group col-md-12 mb-0'),
-            css_class='row-fluid'
-            ),
             Row(
                 Column('nombre', css_class='form-group col-md-6 mb-0'),
                 Column('direccion', css_class='form-group col-md-6 mb-0'),

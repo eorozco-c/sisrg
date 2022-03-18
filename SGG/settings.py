@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
-    'allauth',
-    'allauth.account',
 ]
 
 MIDDLEWARE = [
@@ -94,7 +92,7 @@ DATABASES = {
         'NAME': 'sgg',
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
-        'HOST': 'localhost',
+        'HOST': config('DB_HOST'),
         'PORT': '3306',
     }
 }

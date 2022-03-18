@@ -6,4 +6,9 @@ from rest_framework.authtoken.models import Token
 class ClienteModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
-        fields = '__all__'
+        exclude = ('empresa','logo')
+
+class Sitios_clienteModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sitios_cliente
+        exclude = ('empresa',)

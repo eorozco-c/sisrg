@@ -16,8 +16,6 @@ from .formularios import FormularioCliente, FormularioSitioCliente
 class ListaClientes(ListView):
     model = Cliente
     template_name = 'clientes/clientes_list.html'
-    context_object_name = 'clientes'
-    login_url = 'usuarios:login'
 
     def get_context_data(self, **kwargs):
         context = super(ListaClientes, self).get_context_data(**kwargs)
@@ -108,3 +106,120 @@ def destroy(request,pk):
                 except:
                     messages.success(request,f'No se puede eliminar elemento',extra_tags='danger')
     return redirect("clientes:index")
+
+
+@method_decorator(login_required, name='dispatch')
+class ListaSitiosCliente(ListView):
+    model = Sitios_cliente
+    template_name = 'clientes/sitios_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ListaSitiosCliente, self).get_context_data(**kwargs)
+        try:
+            cliente = Cliente.objects.get(id=self.kwargs['pk'])
+        except:
+            messages.success(self.request,f'Cliente no existe',extra_tags='danger')
+            return redirect("clientes:sitios", pk=self.kwargs['pk'])
+        context['appname'] = "sitios"
+        context['id_cliente'] = cliente.id
+        context['nombre_cliente'] = cliente.nombre
+        context['object_list'] = Sitios_cliente.objects.filter(empresa=self.request.user.empresa,cliente=cliente)
+        return context
+
+    def get_queryset(self):
+        queryset = Sitios_cliente.objects.filter(empresa=self.request.user.empresa)
+        return queryset
+    
+    def get(self, request,pk):
+        if self.request.user.has_perm('clientes.view_sitios_cliente'):
+            return super().get(request)
+        return redirect("master:index")
+
+@method_decorator(login_required, name='dispatch')
+class CrearSitiosCliente(CreateView):
+    template_name = "clientes/formulario.html"
+    form_class = FormularioSitioCliente
+
+    def form_valid(self, form):
+        ruta = form.save(commit = False)
+        try:
+            cliente = Cliente.objects.get(id=self.kwargs['pk'])
+        except:
+            messages.success(self.request,f'Error al crear sitio',extra_tags='danger')
+            return redirect("clientes:sitios", pk=self.kwargs['pk'])
+        ruta.cliente = cliente
+        ruta.empresa = self.request.user.empresa
+        ruta.save()
+        return redirect("clientes:sitios", pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(CrearSitiosCliente, self).get_context_data(**kwargs)
+        try:
+            cliente = Cliente.objects.get(id=self.kwargs['pk'])
+        except:
+            messages.success(self.request,f'Error al crear sitio',extra_tags='danger')
+            return redirect("clientes:sitios", pk=self.kwargs['pk'])
+        context['legend'] = f"Agregar Sitio a {cliente.nombre.capitalize()}"
+        context['appname'] = "sitios"
+        return context
+
+    def get(self, request,pk):
+        if self.request.user.has_perm('clientes.add_sitios_cliente'):
+            return super().get(request)
+        return redirect("master:index")
+
+@method_decorator(login_required, name='dispatch')
+class EditarSitioCliente(UpdateView):
+    template_name = "clientes/formulario.html"
+    model = Sitios_cliente
+    form_class = FormularioSitioCliente
+
+    def form_valid(self,form):
+        form.save()
+        return redirect("clientes:sitios", pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(EditarSitioCliente, self).get_context_data(**kwargs)
+        context['legend'] = "Editar Sitio"
+        context['appname'] = "sitios"
+        return context
+
+    def get(self, request,pk):
+        objeto = self.get_object()
+        if self.request.user.empresa != objeto.empresa:
+            return redirect("master:index")
+        elif not self.request.user.has_perm('clientes.change_sitios_cliente'):
+            return redirect("clientes:sitios", pk=self.kwargs['pk'])
+        return super().get(request)
+
+@login_required(login_url="/")
+def predestroy_sitio(request, pk,pk_cliente):
+    if request.user.has_perm('clientes.delete_sitios_cliente'):
+        if request.method == "GET":
+            try:
+                sitio = Sitios_cliente.objects.get(id=pk)
+            except:
+                return redirect("clientes:sitios", pk=pk_cliente)
+            context={
+                'nombre' : sitio.nombre,
+                'direccion': sitio.direccion,
+                'encargado': sitio.encargado,
+                'id': sitio.id,
+            }
+            return JsonResponse(context)
+    return redirect("clientes:sitios", pk=pk_cliente)
+
+@login_required(login_url="/")
+def destroy_sitio(request, pk,pk_cliente):
+    if request.user.has_perm('clientes.delete_sitios_cliente'):
+        if request.method == "GET":
+            try:
+                sitio = Sitios_cliente.objects.get(id=pk)
+            except:
+                return redirect("clientes:sitios", pk=pk_cliente)
+            if request.user.empresa == sitio.empresa:
+                try:
+                    sitio.delete()
+                except:
+                    messages.success(request,f'No se puede eliminar elemento',extra_tags='danger')
+    return redirect("clientes:sitios", pk=pk_cliente)
