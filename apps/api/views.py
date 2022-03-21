@@ -6,6 +6,12 @@ from apps.clientes.models import Cliente, Sitios_cliente
 from .serializers import ClienteModelSerializer, Sitios_clienteModelSerializer
 # # Create your views here.
 
+class ValidaToken(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return True
+        return False
+
 class ClienteViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication,SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
