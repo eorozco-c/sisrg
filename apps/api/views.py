@@ -1,17 +1,28 @@
 from urllib import request
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_auth.models import TokenModel
 
 from apps.clientes.models import Cliente, Sitios_cliente
 from .serializers import ClienteModelSerializer, Sitios_clienteModelSerializer
 # # Create your views here.
 
-class ValidaToken(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.user.is_authenticated:
-            return True
-        return False
-
+#create GET method that return true or false if the token is valid
+class ValidaToken(APIView):
+    def get(self, request, format=None):
+        token = request.META.get('HTTP_AUTHORIZATION')
+        if token:
+            token = token.replace('Token ', '')
+            try:
+                TokenModel.objects.get(key=token)
+                return Response({"valid": True})
+            except:
+                return Response({"valid": False})
+        else:
+            return Response({"valid": False})
+        
 class ClienteViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication,SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
