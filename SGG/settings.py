@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'apps.usuarios',
     'apps.master',
     'apps.clientes',
+    'apps.estados',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -148,6 +149,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+REST_AUTH_SERIALIZERS = {
+    'TOKEN_SERIALIZER': 'apps.api.serializers.UserDetailsSerializer' # import path to CustomTokenSerializer defined above.
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

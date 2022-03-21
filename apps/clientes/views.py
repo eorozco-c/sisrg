@@ -1,5 +1,3 @@
-from ast import For
-from django.shortcuts import render
 from django.http.response import JsonResponse
 from django.shortcuts import redirect
 from django.views.generic.list import ListView

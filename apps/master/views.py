@@ -3,11 +3,20 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from apps.empresas.models import Empresa
 from apps.usuarios.models import Usuario
+from apps.estados.models import Nombre_estado
 import psutil
 
 # Create your views here.
 def index(request):
     if request.method == "GET":
+        if Nombre_estado.objects.count() == 0:
+            Nombre_estado.objects.bulk_create([
+                Nombre_estado(nombre='EN PROCESO', descripcion='Estado en el que se encuentra una solicitud en proceso de aprobación'),
+                Nombre_estado(nombre='EN REVISION', descripcion='Estado en el que se encuentra una solicitud en proceso de revisión'),
+                Nombre_estado(nombre='APROBADO', descripcion='Estado en el que se encuentra una solicitud aprobada'),
+                Nombre_estado(nombre='RECHAZADO', descripcion='Estado en el que se encuentra una solicitud rechazada'),
+                Nombre_estado(nombre='PAGADO', descripcion='Estado en el que se encuentra una solicitud pagada'),
+            ])
         if Empresa.objects.count() == 0:
             return redirect("empresas:crear")
         if Usuario.objects.count() == 0:
