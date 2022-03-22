@@ -1,4 +1,3 @@
-from dataclasses import field
 import json
 from django.http.response import JsonResponse
 from django.shortcuts import redirect
@@ -6,7 +5,6 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.urls import reverse_lazy
 from django.contrib import messages
 
 from apps.clientes.models import Cliente, Sitios_cliente
