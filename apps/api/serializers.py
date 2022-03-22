@@ -1,7 +1,5 @@
-from dataclasses import field
 from rest_framework import serializers
 from apps.clientes.models import Cliente, Sitios_cliente
-from apps.usuarios.models import Usuario
 from apps.estados.models import Nombre_estado
 from apps.rendiciones.models import Rendicion
 from django.conf import settings
