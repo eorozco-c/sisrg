@@ -1,0 +1,125 @@
+{% extends user.is_authenticated|yesno:"base.html,registration/base_login.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block contenido %}
+
+{% if user.is_authenticated %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <button onclick="history.back()" class="align-self-center ms-2 mb-1 btn btn-primary text-light border"><i
+            class="far fa-arrow-alt-circle-left"></i> Atrás</button>
+</div>
+<div class="col-8 p-3 mx-auto border border-primary">
+    <form enctype="multipart/form-data" class="text-dark" method="POST" class="rounded-3 text-white">
+        {% else %}
+        <form enctype="multipart/form-data" method="POST" class="rounded-3 text-white">
+            {% endif %}
+            <h2 class="text-center">{{legend}}</h2>
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{message.tags}} alert-dismissible" role="alert">{{message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% csrf_token %}
+            <div class="form-row row-fluid">
+                <div class="form-group col-md-4 mb-0">
+                    <label for="cliente">Cliente *</label>
+                    <select name="cliente" id="cliente" class="form-control" required>
+                        <option value="0" selected>--- Seleccione un cliente ---</option>
+                        {% for cliente in clientes %}
+                        <option value="{{cliente.id}}">{{cliente.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group col-md-4 mb-0">
+                    <label for="sitio">Sitio *</label>
+                    <select name="sitio" id="sitio" class="form-control" required>
+                        <option value="" disabled selected>--- Seleccione un Sitio ---</option>
+                        {% for sitio in sitios  %}
+                        <option value="{{sitio.id}}">{{sitio.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group col-md-4 mb-0">
+                    <label for="encargado">Encargado cliente</label>
+                    <input type="text" name="encargado" id="encargado" class="form-control"
+                        placeholder="Nombre del encargado">
+                </div>
+            </div>
+            <div class="form-row row-fluid mt-2">
+                <div class="form-group col-md-6 mb-0">
+                    <label for="usuario">Usuario *</label>
+                    <select name="usuario" id="usuario" class="form-control" required>
+                        <option value="" disabled selected>--- Seleccione un usuario ---</option>
+                        {% for usuario in usuarios %}
+                        <option value="{{usuario.id}}">{{usuario.first_name}} {{usuario.last_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group col-md-6 mb-0">
+                    <label for="estado">Estado *</label>
+                    <select name="estado" id="estado" class="form-control" required>
+                        <option value="" disabled selected>--- Seleccione un estado ---</option>
+                        {% for estado in estados %}
+                        <option value="{{estado.id}}">{{estado.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-row row-fluid mt-2">
+                <div class="form-group col-md-12 mb-0">
+                    <label for="descripcion">Descripción *</label>
+                    <textarea name="descripcion" id="descripcion" class="form-control" rows="3" required></textarea>
+
+                </div>
+            </div>
+            <div class="form-row row-fluid mt-2">
+                <div class="form-group col-md-12 mb-0">
+                    <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                </div>
+            </div>
+        </form>
+</div>
+
+{% endblock contenido %}
+{% block javascript %}
+<script>
+    //ajax para cargar los sitios
+    $(document).ready(function () {
+        $('#cliente').change(function () {
+            var cliente = $(this).val();
+            $.ajax({
+                url: '/rendiciones/obtiene_sitios/' + cliente,
+                type: 'GET',
+                success: function (data) {
+                    $('#sitio').empty();
+                    $('#sitio').append(
+                        '<option value="" disabled selected>--- Seleccione un Sitio ---</option>'
+                    );
+                    $.each(data.sitios, function (index, value) {
+                        $('#sitio').append(
+                            '<option value="' + value.id + '">' + value.nombre +
+                            '</option>'
+                        );
+                    });
+                }
+            });
+        });
+
+        data = "{{data}}";
+        //remove "&quote"
+        data = data.replace(/&quot;/g, '"');
+        //convert to JSON
+        data = JSON.parse(data);
+        //use data to fill select
+        $("#cliente").val(data.cliente);
+        $("#sitio").val(data.sitios_cliente);
+        $("#encargado").val(data.encargado);
+        $("#usuario").val(data.usuario);
+        $("#estado").val(data.estado);
+        $("#descripcion").val(data.descripcion);
+    });
+</script>
+{% endblock javascript%}

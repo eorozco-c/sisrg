@@ -1,12 +1,11 @@
-from urllib import request
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_auth.models import TokenModel
-
 from apps.clientes.models import Cliente, Sitios_cliente
-from .serializers import ClienteModelSerializer, Sitios_clienteModelSerializer
+from apps.estados.models import Nombre_estado
+from .serializers import *
 # # Create your views here.
 
 #create GET method that return true or false if the token is valid
@@ -48,3 +47,19 @@ class SitioclienteViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(empresa=self.request.user.empresa)
+
+class NombreEstadoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Nombre_estado.objects.all()
+    serializer_class = EstadosModelSerializer
+
+class RendicionViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Rendicion.objects.all()
+    serializer_class = RendicionModelSerializer
+    
+    def get_queryset(self):
+        queryset = Rendicion.objects.filter(usuario__empresa=self.request.user.empresa)
+        return queryset

@@ -66,6 +66,23 @@
             </div>
         </div>
     </li>
+    <hr class="sidebar-divider d-none d-md-block mb-0">
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-bs-toggle="collapse"
+            data-bs-target="#collapserendiciones" aria-expanded="true" aria-controls="collapserendiciones">
+            <i class="fas fa-address-book"></i>
+            <span>Rendiciones</span>
+        </a>
+        <div id="collapserendiciones" class="accordion-collapse collapse" aria-labelledby="headingOne"
+            data-bs-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a id="nav-rendiciones" class="collapse-item font-weight-bold"
+                    href="{% url 'rendiciones:index' %}">Detalles</a>
+            </div>
+
+        </div>
+    </li>
     {% endif %}
 
     <hr class="sidebar-divider d-none d-md-block">

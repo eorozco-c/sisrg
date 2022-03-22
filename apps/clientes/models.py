@@ -16,7 +16,7 @@ class Cliente(models.Model):
         return self.nombre
 
 class Sitios_cliente(models.Model):
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='sitios_cliente_cliente')
     nombre = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=100, blank=True, null=True)
     telefono = models.CharField(max_length=100, blank=True, null=True)
