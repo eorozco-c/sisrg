@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_auth.models import TokenModel
 from apps.clientes.models import Cliente, Sitios_cliente
 from apps.estados.models import Nombre_estado
+from apps.rendiciones.models import RendicionDetalle
 from .serializers import *
 # # Create your views here.
 
@@ -12,6 +13,7 @@ from .serializers import *
 class ValidaToken(APIView):
     def get(self, request, format=None):
         token = request.META.get('HTTP_AUTHORIZATION')
+        print(token)
         if token:
             token = token.replace('Token ', '')
             try:
@@ -61,5 +63,18 @@ class RendicionViewSet(viewsets.ModelViewSet):
     serializer_class = RendicionModelSerializer
     
     def get_queryset(self):
-        queryset = Rendicion.objects.filter(usuario__empresa=self.request.user.empresa)
+        queryset = Rendicion.objects.filter(usuario=self.request.user)
         return queryset
+
+class DetalleRendicionViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = RendicionDetalle.objects.all()
+    serializer_class = RendicionDetalleModelSerializer
+
+    def get_queryset(self):
+        queryset = RendicionDetalle.objects.filter(rendicion_id=self.kwargs['pk_rendicion'])
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(rendicion_id=self.kwargs['pk_rendicion'])

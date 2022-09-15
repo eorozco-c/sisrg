@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.clientes.models import Cliente, Sitios_cliente
 from apps.estados.models import Nombre_estado
-from apps.rendiciones.models import Rendicion
+from apps.rendiciones.models import Rendicion, RendicionDetalle
 from django.conf import settings
 from rest_auth.models import TokenModel
 from rest_auth.utils import import_callable
@@ -38,3 +38,9 @@ class RendicionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rendicion
         fields = ("__all__")
+
+class RendicionDetalleModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RendicionDetalle
+        exclude = ('rendicion',)
+

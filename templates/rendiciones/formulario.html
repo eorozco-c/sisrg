@@ -72,8 +72,34 @@
                 <div class="form-group col-md-12 mb-0">
                     <label for="descripcion">Descripción *</label>
                     <textarea name="descripcion" id="descripcion" class="form-control" rows="3" required></textarea>
-
                 </div>
+            </div>
+            <div class="form-row row-fluid mt-2">
+                <div class="form-group col-md-6 mb-0">
+                    <label for="km_ini">Kilometraje Inicial</label>
+                    <input type="number" name="km_ini" id="km_ini" class="form-control"
+                        placeholder="Kilometraje Inicial">
+                </div>
+                <div class="form-group col-md-6 mb-0">
+                    <label for="km_fin">Kilometraje Final</label>
+                    <input type="number" name="km_fin" id="km_fin" class="form-control"
+                        placeholder="Kilometraje Inicial">
+                </div>
+            </div>
+            <div class="form-row row-fluid mt-2">
+                <div class="form-group col-md-6 mb-0">
+                    <label for="img_km_ini">Imagen Kilometraje Inicial</label>
+                    <input type="file" name="img_km_ini" id="img_km_ini" class="form-control"
+                        placeholder="Kilometraje Inicial">
+                </div>
+                <div class="form-group col-md-6 mb-0">
+                    <label for="img_km_fin">Imagen Kilometraje Final</label>
+                    <input type="file" name="img_km_fin" id="img_km_fin" class="form-control"
+                        placeholder="Kilometraje Inicial">
+                </div>
+            </div>
+            <div class="form-row row-fluid mt-2">
+
             </div>
             <div class="form-row row-fluid mt-2">
                 <div class="form-group col-md-12 mb-0">
@@ -81,6 +107,7 @@
                 </div>
             </div>
         </form>
+
 </div>
 
 {% endblock contenido %}
@@ -120,6 +147,8 @@
         $("#usuario").val(data.usuario);
         $("#estado").val(data.estado);
         $("#descripcion").val(data.descripcion);
+        $("#km_ini").val(data.km_ini);
+        $("#km_fin").val(data.km_fin);
     });
 </script>
 {% endblock javascript%}

@@ -16,6 +16,7 @@ def index(request):
                 Nombre_estado(nombre='APROBADO', descripcion='Estado en el que se encuentra una solicitud aprobada'),
                 Nombre_estado(nombre='RECHAZADO', descripcion='Estado en el que se encuentra una solicitud rechazada'),
                 Nombre_estado(nombre='PAGADO', descripcion='Estado en el que se encuentra una solicitud pagada'),
+                Nombre_estado(nombre='INICIADO', descripcion='Estado inicial de una solicitud'),
             ])
         if Empresa.objects.count() == 0:
             return redirect("empresas:crear")
