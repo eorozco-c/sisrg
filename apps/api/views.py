@@ -78,3 +78,13 @@ class DetalleRendicionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(rendicion_id=self.kwargs['pk_rendicion'])
+
+class RendicionesEstadoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Rendicion.objects.all()
+    serializer_class = RendicionEstadoSerializer
+
+    def get_queryset(self):
+        queryset = Rendicion.objects.filter(estado_id=self.kwargs['pk_estado'], usuario=self.request.user)
+        return queryset

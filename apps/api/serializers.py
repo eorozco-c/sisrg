@@ -44,3 +44,8 @@ class RendicionDetalleModelSerializer(serializers.ModelSerializer):
         model = RendicionDetalle
         exclude = ('rendicion',)
 
+class RendicionEstadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rendicion
+        fields = ('__all__')
+
