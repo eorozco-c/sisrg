@@ -87,16 +87,33 @@
                 </div>
             </div>
             <div class="form-row row-fluid mt-2">
+
                 <div class="form-group col-md-6 mb-0">
                     <label for="img_km_ini">Imagen Kilometraje Inicial</label>
                     <input type="file" name="img_km_ini" id="img_km_ini" class="form-control"
                         placeholder="Kilometraje Inicial">
                 </div>
+                {% if img_km_ini %}
+                <div class="form-group col-md-3 mb-0">
+                    <label for="img_km_ini">Descargar Imagen</label>
+                    <a href="/media/{{user.empresa.nombre}}/rendiciones/{{img_km_ini}}"
+                        class="btn btn-secondary btn-block" download> <i class="fa fa-download"></i>
+                        Descargar</a>
+                </div>
+                {% endif %}
                 <div class="form-group col-md-6 mb-0">
                     <label for="img_km_fin">Imagen Kilometraje Final</label>
                     <input type="file" name="img_km_fin" id="img_km_fin" class="form-control"
                         placeholder="Kilometraje Inicial">
                 </div>
+                {% if img_km_fin %}
+                <div class="form-group col-md-3 mb-0">
+                    <label for="img_km_ini">Descargar Imagen</label>
+                    <a href="/media/{{user.empresa.nombre}}/rendiciones/{{img_km_fin}}"
+                        class="btn btn-secondary btn-block" download> <i class="fa fa-download"></i>
+                        Descargar</a>
+                </div>
+                {% endif %}
             </div>
             <div class="form-row row-fluid mt-2">
 

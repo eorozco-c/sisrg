@@ -1,4 +1,3 @@
-import json
 from django.http.response import JsonResponse
 from django.shortcuts import redirect
 from django.views.generic.list import ListView
@@ -12,7 +11,7 @@ from apps.estados.models import Nombre_estado
 from apps.usuarios.models import Usuario
 from .models import *
 from .formularios import RendicionDetalleForm
-import datetime
+import datetime, os, json
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
@@ -71,6 +70,21 @@ class CrearRendicion(CreateView):
             rendicion.img_km_inicial = self.request.FILES.get('img_km_ini')
             rendicion.img_km_final = self.request.FILES.get('img_km_fin')
             rendicion.save()
+            #save img_km_inicial and img_km_final in media/request.user.empresa/rendiciones
+            media_path = f'media/{str(request.user.empresa)}/rendiciones'
+            if not os.path.exists(media_path):
+                os.makedirs(media_path)
+            #save files into media/empresa/rendiciones
+            if self.request.FILES.get('img_km_ini'):
+                #save into media_path
+                with open(f'{media_path}/{self.request.FILES.get("img_km_ini")}', 'wb+') as destination:
+                    for chunk in self.request.FILES.get('img_km_ini').chunks():
+                        destination.write(chunk)
+            if self.request.FILES.get('img_km_fin'):
+                #save into media_path
+                with open(f'{media_path}/{self.request.FILES.get("img_km_fin")}', 'wb+') as destination:
+                    for chunk in self.request.FILES.get('img_km_fin').chunks():
+                        destination.write(chunk)
             messages.success(self.request, 'Rendición creada correctamente')
             return redirect('rendiciones:index')
         return redirect("master:index")
@@ -117,6 +131,8 @@ class EditarRendicion(UpdateView):
             'km_fin': self.object.kilometraje_final,
         })
         context['data'] = data
+        context['img_km_ini'] = self.object.img_km_inicial
+        context['img_km_fin'] = self.object.img_km_final
 
         return context
 
@@ -134,6 +150,21 @@ class EditarRendicion(UpdateView):
             rendicion.img_km_inicial = self.request.FILES.get('img_km_ini')
             rendicion.img_km_final = self.request.FILES.get('img_km_fin')
             rendicion.save()
+            #save img_km_inicial and img_km_final in media/request.user.empresa/rendiciones
+            media_path = f'media/{str(request.user.empresa)}/rendiciones'
+            if not os.path.exists(media_path):
+                os.makedirs(media_path)
+            #save files into media/empresa/rendiciones
+            if self.request.FILES.get('img_km_ini'):
+                #save into media_path
+                with open(f'{media_path}/{self.request.FILES.get("img_km_ini")}', 'wb+') as destination:
+                    for chunk in self.request.FILES.get('img_km_ini').chunks():
+                        destination.write(chunk)
+            if self.request.FILES.get('img_km_fin'):
+                #save into media_path
+                with open(f'{media_path}/{self.request.FILES.get("img_km_fin")}', 'wb+') as destination:
+                    for chunk in self.request.FILES.get('img_km_fin').chunks():
+                        destination.write(chunk)
             messages.success(self.request, 'Rendición editada correctamente')
             return redirect('rendiciones:index')
         return redirect("master:index")

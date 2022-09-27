@@ -6,6 +6,7 @@ from django.conf import settings
 from rest_auth.models import TokenModel
 from rest_auth.utils import import_callable
 from rest_auth.serializers import UserDetailsSerializer as DefaultUserDetailsSerializer
+from rest_framework.serializers import Serializer,FileField
 
 rest_auth_serializers = getattr(settings, 'REST_AUTH_SERIALIZERS', {})
 UserDetailsSerializer = import_callable(
@@ -48,4 +49,3 @@ class RendicionEstadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rendicion
         fields = ('__all__')
-

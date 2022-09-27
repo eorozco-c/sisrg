@@ -9,7 +9,7 @@ from django.contrib import messages
 from apps.usuarios.models import Usuario
 from .models import Empresa
 from .formularios import FormularioEmpresa
-
+import os
 # Create your views here.
 
 @method_decorator(login_required, name='dispatch')
@@ -45,6 +45,8 @@ class CrearEmpresa(CreateView):
 
     def form_valid(self,form):
         empresa = form.save()
+        if not os.path.exists(f"media/{empresa.nombre}"):
+            os.mkdir("media/"+empresa.nombre)
         return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
@@ -89,6 +91,9 @@ def destroy(request,pk):
                 return redirect("empresas:index")
             try:
                 empresa.delete()
+                #remove media folder
+                if os.path.exists(f"media/{empresa.nombre}"):
+                    os.rmdir("media/"+empresa.nombre)
             except:
                 messages.success(request,f'No se puede eliminar empresa ya que tiene elementos asignados',extra_tags='danger')
                 return redirect("empresas:index")

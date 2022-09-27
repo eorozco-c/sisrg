@@ -1,12 +1,15 @@
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework import viewsets, permissions, mixins
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_auth.models import TokenModel
 from apps.clientes.models import Cliente, Sitios_cliente
 from apps.estados.models import Nombre_estado
 from apps.rendiciones.models import RendicionDetalle
 from .serializers import *
+import os
 # # Create your views here.
 
 #create GET method that return true or false if the token is valid
