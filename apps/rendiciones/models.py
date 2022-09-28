@@ -24,6 +24,8 @@ class Rendicion(models.Model):
     def __str__(self):
         return self.id
 
+def file_path_detalle(instance, filename):
+    return f'{instance.rendicion.usuario.empresa.nombre}/rendiciones/{filename}'
 
 class RendicionDetalle(models.Model):
     nombre = models.CharField(max_length=100,blank=True,null=True)
@@ -31,7 +33,7 @@ class RendicionDetalle(models.Model):
     descripcion = models.TextField()
     monto_neto = models.CharField(max_length=100,blank=True,null=True)
     monto_iva = models.CharField(max_length=100,blank=True,null=True)
-    imagen = models.ImageField(upload_to=file_path, null=True, blank=True)
+    imagen = models.ImageField(upload_to=file_path_detalle, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

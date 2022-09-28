@@ -6,7 +6,7 @@ from crispy_forms.layout import Layout, Submit, Row, Column
 class RendicionDetalleForm(forms.ModelForm):
     class Meta:
         model = RendicionDetalle
-        fields = ('nombre', 'descripcion', 'monto_neto', 'monto_iva')
+        fields = ('nombre', 'descripcion', 'monto_neto', 'monto_iva', 'imagen')
 
     def __init__(self, *args, **kwargs):
         super(RendicionDetalleForm, self).__init__(*args, **kwargs)
@@ -24,6 +24,10 @@ class RendicionDetalleForm(forms.ModelForm):
                 Column('monto_neto', css_class='form-group col-md-6 mb-0'),
                 Column('monto_iva', css_class='form-group col-md-6 mb-0'),
                 css_class='form-row'
+            ),
+            Row(
+                Column('imagen', css_class='form-group col-md-12 mb-0'),
+                css_class="row-fluid",
             ),
             Submit('submit', 'Guardar')
         )
