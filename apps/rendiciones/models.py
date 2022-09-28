@@ -17,24 +17,13 @@ class Rendicion(models.Model):
     kilometraje_inicial = models.CharField(max_length=100,blank=True,null=True)
     kilometraje_final = models.CharField(max_length=100,blank=True,null=True)
     img_km_inicial = models.ImageField(upload_to=file_path, null=True, blank=True)
-    img_km_final = models.ImageField(upload_to='rendiciones', null=True, blank=True)
+    img_km_final = models.ImageField(upload_to=file_path, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    #folder of upload images is /media/request.user.empresa/rendiciones
     def __str__(self):
         return self.id
 
-
-class RendicionArchivo(models.Model):
-    rendicion = models.ForeignKey(Rendicion, on_delete=models.PROTECT, related_name="imagenes_rendicion")
-    nombre = models.CharField(max_length=100,blank=True,null=True)
-    ruta = models.TextField(blank=True,null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.nombre
 
 class RendicionDetalle(models.Model):
     nombre = models.CharField(max_length=100,blank=True,null=True)
@@ -42,16 +31,7 @@ class RendicionDetalle(models.Model):
     descripcion = models.TextField()
     monto_neto = models.CharField(max_length=100,blank=True,null=True)
     monto_iva = models.CharField(max_length=100,blank=True,null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.nombre
-
-class RendicionDetalleArchivo(models.Model):
-    rendicion_detalle = models.ForeignKey(RendicionDetalle, on_delete=models.PROTECT, related_name="rendiciones_detalle_archivo")
-    nombre = models.CharField(max_length=100,blank=True,null=True)
-    ruta = models.TextField()
+    imagen = models.ImageField(upload_to=file_path, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -9,8 +9,9 @@ router.register('clientes', ClienteViewSet)
 router.register('sitios', SitioclienteViewSet)
 router.register('estados', NombreEstadoViewSet)
 router.register('rendiciones', RendicionViewSet)
-router.register('detalle_rendicion/(?P<pk_rendicion>\d+)', DetalleRendicionViewSet)
 router.register('rendiciones_estado/(?P<pk_estado>\d+)', RendicionesEstadoViewSet)
+router.register('detalle_rendicion/(?P<pk_rendicion>\d+)', DetalleRendicionViewSet)
+
 
 urlpatterns = [
     path('rest-auth/', include('rest_auth.urls')),
