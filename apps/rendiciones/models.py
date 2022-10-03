@@ -26,6 +26,10 @@ class TipoDeGasto(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        self.nombre = self.nombre.upper()
+        super(TipoDeGasto, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.nombre
 

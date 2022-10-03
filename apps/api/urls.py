@@ -11,6 +11,7 @@ router.register('estados', NombreEstadoViewSet)
 router.register('rendiciones', RendicionViewSet)
 router.register('rendiciones_estado/(?P<pk_estado>\d+)', RendicionesEstadoViewSet)
 router.register('detalle_rendicion/(?P<pk_rendicion>\d+)', DetalleRendicionViewSet)
+router.register('tipo_de_gastos', TipoDeGastoViewSet)
 
 
 urlpatterns = [

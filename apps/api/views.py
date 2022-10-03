@@ -6,7 +6,7 @@ from rest_auth.models import TokenModel
 from apps.clientes.models import Cliente
 #Sitios_cliente
 from apps.estados.models import Nombre_estado
-from apps.rendiciones.models import RendicionDetalle
+from apps.rendiciones.models import RendicionDetalle, TipoDeGasto
 from .serializers import *
 import os
 # # Create your views here.
@@ -90,3 +90,12 @@ class RendicionesEstadoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         queryset = Rendicion.objects.filter(estado_id=self.kwargs['pk_estado'], usuario=self.request.user)
         return queryset
+
+class TipoDeGastoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = TipoDeGasto.objects.all()
+    serializer_class = TipoDeGastoModelSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(empresa=self.request.user.empresa)
