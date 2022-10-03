@@ -6,8 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .models import Cliente, Sitios_cliente
-from .formularios import FormularioCliente, FormularioSitioCliente
+from .models import Cliente
+#, Sitios_cliente
+from .formularios import FormularioCliente
+#, FormularioSitioCliente
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
@@ -106,89 +108,89 @@ def destroy(request,pk):
     return redirect("clientes:index")
 
 
-@method_decorator(login_required, name='dispatch')
-class ListaSitiosCliente(ListView):
-    model = Sitios_cliente
-    template_name = 'clientes/sitios_list.html'
+# @method_decorator(login_required, name='dispatch')
+# class ListaSitiosCliente(ListView):
+#     model = Sitios_cliente
+#     template_name = 'clientes/sitios_list.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(ListaSitiosCliente, self).get_context_data(**kwargs)
-        try:
-            cliente = Cliente.objects.get(id=self.kwargs['pk'])
-        except:
-            messages.success(self.request,f'Cliente no existe',extra_tags='danger')
-            return redirect("clientes:sitios", pk=self.kwargs['pk'])
-        context['appname'] = "sitios"
-        context['id_cliente'] = cliente.id
-        context['nombre_cliente'] = cliente.nombre
-        context['object_list'] = Sitios_cliente.objects.filter(empresa=self.request.user.empresa,cliente=cliente)
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super(ListaSitiosCliente, self).get_context_data(**kwargs)
+#         try:
+#             cliente = Cliente.objects.get(id=self.kwargs['pk'])
+#         except:
+#             messages.success(self.request,f'Cliente no existe',extra_tags='danger')
+#             return redirect("clientes:sitios", pk=self.kwargs['pk'])
+#         context['appname'] = "sitios"
+#         context['id_cliente'] = cliente.id
+#         context['nombre_cliente'] = cliente.nombre
+#         context['object_list'] = Sitios_cliente.objects.filter(empresa=self.request.user.empresa,cliente=cliente)
+#         return context
 
-    def get_queryset(self):
-        queryset = Sitios_cliente.objects.filter(empresa=self.request.user.empresa)
-        return queryset
+#     def get_queryset(self):
+#         queryset = Sitios_cliente.objects.filter(empresa=self.request.user.empresa)
+#         return queryset
     
-    def get(self, request,pk):
-        if self.request.user.has_perm('clientes.view_sitios_cliente'):
-            return super().get(request)
-        return redirect("master:index")
+#     def get(self, request,pk):
+#         if self.request.user.has_perm('clientes.view_sitios_cliente'):
+#             return super().get(request)
+#         return redirect("master:index")
 
-@method_decorator(login_required, name='dispatch')
-class CrearSitiosCliente(CreateView):
-    template_name = "clientes/formulario.html"
-    form_class = FormularioSitioCliente
+# @method_decorator(login_required, name='dispatch')
+# class CrearSitiosCliente(CreateView):
+#     template_name = "clientes/formulario.html"
+#     form_class = FormularioSitioCliente
 
-    def form_valid(self, form):
-        ruta = form.save(commit = False)
-        try:
-            cliente = Cliente.objects.get(id=self.kwargs['pk'])
-        except:
-            messages.success(self.request,f'Error al crear sitio',extra_tags='danger')
-            return redirect("clientes:sitios", pk=self.kwargs['pk'])
-        ruta.cliente = cliente
-        ruta.empresa = self.request.user.empresa
-        ruta.save()
-        return redirect("clientes:sitios", pk=self.kwargs['pk'])
+#     def form_valid(self, form):
+#         ruta = form.save(commit = False)
+#         try:
+#             cliente = Cliente.objects.get(id=self.kwargs['pk'])
+#         except:
+#             messages.success(self.request,f'Error al crear sitio',extra_tags='danger')
+#             return redirect("clientes:sitios", pk=self.kwargs['pk'])
+#         ruta.cliente = cliente
+#         ruta.empresa = self.request.user.empresa
+#         ruta.save()
+#         return redirect("clientes:sitios", pk=self.kwargs['pk'])
 
-    def get_context_data(self, **kwargs):
-        context = super(CrearSitiosCliente, self).get_context_data(**kwargs)
-        try:
-            cliente = Cliente.objects.get(id=self.kwargs['pk'])
-        except:
-            messages.success(self.request,f'Error al crear sitio',extra_tags='danger')
-            return redirect("clientes:sitios", pk=self.kwargs['pk'])
-        context['legend'] = f"Agregar Sitio a {cliente.nombre.capitalize()}"
-        context['appname'] = "sitios"
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super(CrearSitiosCliente, self).get_context_data(**kwargs)
+#         try:
+#             cliente = Cliente.objects.get(id=self.kwargs['pk'])
+#         except:
+#             messages.success(self.request,f'Error al crear sitio',extra_tags='danger')
+#             return redirect("clientes:sitios", pk=self.kwargs['pk'])
+#         context['legend'] = f"Agregar Sitio a {cliente.nombre.capitalize()}"
+#         context['appname'] = "sitios"
+#         return context
 
-    def get(self, request,pk):
-        if self.request.user.has_perm('clientes.add_sitios_cliente'):
-            return super().get(request)
-        return redirect("master:index")
+#     def get(self, request,pk):
+#         if self.request.user.has_perm('clientes.add_sitios_cliente'):
+#             return super().get(request)
+#         return redirect("master:index")
 
-@method_decorator(login_required, name='dispatch')
-class EditarSitioCliente(UpdateView):
-    template_name = "clientes/formulario.html"
-    model = Sitios_cliente
-    form_class = FormularioSitioCliente
+# @method_decorator(login_required, name='dispatch')
+# class EditarSitioCliente(UpdateView):
+#     template_name = "clientes/formulario.html"
+#     model = Sitios_cliente
+#     form_class = FormularioSitioCliente
 
-    def form_valid(self,form):
-        form.save()
-        return redirect("clientes:sitios", pk=self.kwargs['pk'])
+#     def form_valid(self,form):
+#         form.save()
+#         return redirect("clientes:sitios", pk=self.kwargs['pk'])
 
-    def get_context_data(self, **kwargs):
-        context = super(EditarSitioCliente, self).get_context_data(**kwargs)
-        context['legend'] = "Editar Sitio"
-        context['appname'] = "sitios"
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super(EditarSitioCliente, self).get_context_data(**kwargs)
+#         context['legend'] = "Editar Sitio"
+#         context['appname'] = "sitios"
+#         return context
 
-    def get(self, request,pk):
-        objeto = self.get_object()
-        if self.request.user.empresa != objeto.empresa:
-            return redirect("master:index")
-        elif not self.request.user.has_perm('clientes.change_sitios_cliente'):
-            return redirect("clientes:sitios", pk=self.kwargs['pk'])
-        return super().get(request)
+#     def get(self, request,pk):
+#         objeto = self.get_object()
+#         if self.request.user.empresa != objeto.empresa:
+#             return redirect("master:index")
+#         elif not self.request.user.has_perm('clientes.change_sitios_cliente'):
+#             return redirect("clientes:sitios", pk=self.kwargs['pk'])
+#         return super().get(request)
 
 @login_required(login_url="/")
 def predestroy_sitio(request, pk,pk_cliente):

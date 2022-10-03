@@ -38,9 +38,7 @@
                 <td style="vertical-align: middle;">{{cliente.telefono}}</td>
                 <td style="vertical-align: middle;">{{cliente.email}}</td>
                 <td style="vertical-align: middle;">
-                    <a href="{% url 'clientes:sitios' pk=cliente.id %}"
-                        class="btn btn-warning text-light border border-custom"><i class="fas fa-archway"></i>
-                        Sitios</a>
+
                     <a class="btn btn-primary btn-sm text-light border border-dark m-1"
                         href="{% url 'clientes:editar' pk=cliente.id %}" id="edit"><i class="fas fa-edit"></i></a>
                     <a class="open-modal btn btn-danger btn-sm text-light border border-dark m-1" data-bs-toggle="modal"

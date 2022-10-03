@@ -1,11 +1,10 @@
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework import viewsets, permissions, mixins
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, FormParser
 from rest_auth.models import TokenModel
-from apps.clientes.models import Cliente, Sitios_cliente
+from apps.clientes.models import Cliente
+#Sitios_cliente
 from apps.estados.models import Nombre_estado
 from apps.rendiciones.models import RendicionDetalle
 from .serializers import *
@@ -40,18 +39,18 @@ class ClienteViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(empresa=self.request.user.empresa)
 
-class SitioclienteViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = Sitios_cliente.objects.all()
-    serializer_class = Sitios_clienteModelSerializer
+# class SitioclienteViewSet(viewsets.ModelViewSet):
+#     authentication_classes = [TokenAuthentication,SessionAuthentication]
+#     permission_classes = [permissions.IsAuthenticated]
+#     queryset = Sitios_cliente.objects.all()
+#     serializer_class = Sitios_clienteModelSerializer
 
-    def get_queryset(self):
-        queryset = Sitios_cliente.objects.filter(empresa=self.request.user.empresa)
-        return queryset
+#     def get_queryset(self):
+#         queryset = Sitios_cliente.objects.filter(empresa=self.request.user.empresa)
+#         return queryset
 
-    def perform_create(self, serializer):
-        serializer.save(empresa=self.request.user.empresa)
+#     def perform_create(self, serializer):
+#         serializer.save(empresa=self.request.user.empresa)
 
 class NombreEstadoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     authentication_classes = [TokenAuthentication,SessionAuthentication]

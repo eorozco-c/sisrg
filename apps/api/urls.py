@@ -6,7 +6,7 @@ app_name = 'api'
 
 router = DefaultRouter()
 router.register('clientes', ClienteViewSet)
-router.register('sitios', SitioclienteViewSet)
+# router.register('sitios', SitioclienteViewSet)
 router.register('estados', NombreEstadoViewSet)
 router.register('rendiciones', RendicionViewSet)
 router.register('rendiciones_estado/(?P<pk_estado>\d+)', RendicionesEstadoViewSet)

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from apps.clientes.models import Cliente, Sitios_cliente
+from apps.clientes.models import Cliente
+#, Sitios_cliente
 from apps.estados.models import Nombre_estado
 from apps.rendiciones.models import Rendicion, RendicionDetalle
 from django.conf import settings
@@ -24,10 +25,10 @@ class ClienteModelSerializer(serializers.ModelSerializer):
         model = Cliente
         exclude = ('empresa','logo')
 
-class Sitios_clienteModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Sitios_cliente
-        exclude = ('empresa',)
+# class Sitios_clienteModelSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Sitios_cliente
+#         exclude = ('empresa',)
 
 class EstadosModelSerializer(serializers.ModelSerializer):
     class Meta:

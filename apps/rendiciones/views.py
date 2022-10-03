@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.urls import reverse_lazy
-from apps.clientes.models import Cliente, Sitios_cliente
+from apps.clientes.models import Cliente
+#, Sitios_cliente
 from apps.estados.models import Nombre_estado
 from apps.usuarios.models import Usuario
 from .models import *
@@ -63,7 +64,7 @@ class CrearRendicion(CreateView):
             rendicion.usuario = Usuario.objects.get(id=self.request.POST.get('usuario'))
             rendicion.cliente = Cliente.objects.get(id=self.request.POST.get('cliente'))
             rendicion.encargado = self.request.POST.get('encargado')
-            rendicion.sitios_cliente = Sitios_cliente.objects.get(id=self.request.POST.get('sitio'))
+            rendicion.sitios_cliente = self.request.POST.get('sitios_cliente')
             rendicion.estado = Nombre_estado.objects.get(id=self.request.POST.get('estado'))
             rendicion.kilometraje_inicial = self.request.POST.get('km_ini')
             rendicion.kilometraje_final = self.request.POST.get('km_fin')
@@ -115,17 +116,14 @@ class EditarRendicion(UpdateView):
         context['clientes'] = Cliente.objects.filter(empresa=self.request.user.empresa)
         context['usuarios'] = Usuario.objects.filter(empresa=self.request.user.empresa, is_superuser=False)
         context['estados'] = Nombre_estado.objects.all()
-        try:
-            context['sitios'] = Sitios_cliente.objects.filter(cliente=self.object.cliente)
-        except:
-            context['sitios'] = []
         #data for prepopulate form in object
+        print(self.object.sitios_cliente)
         data = json.dumps({
             'descripcion': self.object.descripcion,
             'usuario': self.object.usuario.id,
             'cliente': self.object.cliente.id,
             'encargado': self.object.encargado,
-            'sitios_cliente': self.object.sitios_cliente.id,
+            'sitios_cliente': self.object.sitios_cliente,
             'estado': self.object.estado.id,
             'km_ini': self.object.kilometraje_inicial,
             'km_fin': self.object.kilometraje_final,

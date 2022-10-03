@@ -1,6 +1,7 @@
 from django.db import models
 from apps.usuarios.models import Usuario
-from apps.clientes.models import Cliente, Sitios_cliente
+from apps.clientes.models import Cliente
+#Sitios_cliente
 from apps.estados.models import Nombre_estado
 
 def file_path(instance, filename):
@@ -12,7 +13,7 @@ class Rendicion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT, related_name="rendiciones_usuario")
     cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT, related_name="rendiciones_cliente")
     encargado = models.CharField(max_length=100,null=True,blank=True)
-    sitios_cliente = models.ForeignKey(Sitios_cliente, on_delete=models.PROTECT, related_name="rendiciones_sitios_cliente")
+    sitios_cliente = models.CharField(max_length=255,blank=True,null=True)
     estado = models.ForeignKey(Nombre_estado, on_delete=models.PROTECT, related_name="rendiciones_nombre_estado")
     kilometraje_inicial = models.CharField(max_length=100,blank=True,null=True)
     kilometraje_final = models.CharField(max_length=100,blank=True,null=True)
