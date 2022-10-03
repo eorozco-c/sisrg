@@ -34,11 +34,6 @@
                     </select>
                 </div>
                 <div class="form-group col-md-4 mb-0">
-                    <label for="sitio">Sitio *</label>
-                    <input type="text" class="form-control" id="sitios_cliente" name="sitio" placeholder="Sitio"
-                        required>
-                </div>
-                <div class="form-group col-md-4 mb-0">
                     <label for="encargado">Encargado cliente</label>
                     <input type="text" name="encargado" id="encargado" class="form-control"
                         placeholder="Nombre del encargado">
@@ -69,50 +64,6 @@
                     <label for="descripcion">Descripción *</label>
                     <textarea name="descripcion" id="descripcion" class="form-control" rows="3" required></textarea>
                 </div>
-            </div>
-            <div class="form-row row-fluid mt-2">
-                <div class="form-group col-md-6 mb-0">
-                    <label for="km_ini">Kilometraje Inicial</label>
-                    <input type="number" name="km_ini" id="km_ini" class="form-control"
-                        placeholder="Kilometraje Inicial">
-                </div>
-                <div class="form-group col-md-6 mb-0">
-                    <label for="km_fin">Kilometraje Final</label>
-                    <input type="number" name="km_fin" id="km_fin" class="form-control"
-                        placeholder="Kilometraje Inicial">
-                </div>
-            </div>
-            <div class="form-row row-fluid mt-2">
-
-                <div class="form-group col-md-6 mb-0">
-                    <label for="img_km_ini">Imagen Kilometraje Inicial</label>
-                    <input type="file" name="img_km_ini" id="img_km_ini" class="form-control"
-                        placeholder="Kilometraje Inicial">
-                </div>
-                {% if img_km_ini %}
-                <div class="form-group col-md-3 mb-0">
-                    <label for="img_km_ini">Descargar Imagen</label>
-                    <a href="/media/{{user.empresa.nombre}}/rendiciones/{{img_km_ini}}"
-                        class="btn btn-secondary btn-block" download> <i class="fa fa-download"></i>
-                        Descargar</a>
-                </div>
-                {% endif %}
-                <div class="form-group col-md-6 mb-0">
-                    <label for="img_km_fin">Imagen Kilometraje Final</label>
-                    <input type="file" name="img_km_fin" id="img_km_fin" class="form-control"
-                        placeholder="Kilometraje Inicial">
-                </div>
-                {% if img_km_fin %}
-                <div class="form-group col-md-3 mb-0">
-                    <label for="img_km_ini">Descargar Imagen</label>
-                    <a href="/media/{{user.empresa.nombre}}/rendiciones/{{img_km_fin}}"
-                        class="btn btn-secondary btn-block" download> <i class="fa fa-download"></i>
-                        Descargar</a>
-                </div>
-                {% endif %}
-            </div>
-            <div class="form-row row-fluid mt-2">
-
             </div>
             <div class="form-row row-fluid mt-2">
                 <div class="form-group col-md-12 mb-0">
@@ -156,7 +107,6 @@
         data = JSON.parse(data);
         //use data to fill select
         $("#cliente").val(data.cliente);
-        $("#sitios_cliente").val(data.sitios_cliente);
         $("#encargado").val(data.encargado);
         $("#usuario").val(data.usuario);
         $("#estado").val(data.estado);

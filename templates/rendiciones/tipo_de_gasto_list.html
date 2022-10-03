@@ -6,9 +6,9 @@
     <a href="{% url 'rendiciones:index' %}" class="align-self-center ms-2 mb-1 btn btn-primary text-light border"><i
             class="far fa-arrow-alt-circle-left"></i> Volver Atrás</a>
     <div>
-        <a href="{% url 'rendiciones:crear_detalle_rendicion' pk_rendicion=pk %}"
-            class="btn btn-success text-light border border-custom me-2"><i class="fas fa-plus-circle"></i> Agregar
-            Detalle</a>
+        <a href="{% url 'rendiciones:crear_tipo_de_gasto' %}"
+            class="btn btn-success text-light border border-custom me-2"><i class="fas fa-plus-circle"></i>
+            Agregar Tipo de Gasto</a>
     </div>
 </div>
 
@@ -24,13 +24,8 @@
         <thead class="table-dark">
             <tr>
                 <th>ID</th>
-                <th>Fecha</th>
                 <th>Nombre</th>
-                <th>Monto</th>
-                <th>Tipo de Gasto</th>
-                <th>Región</th>
-                <th>Fecha creación</th>
-                <th>Fecha modificación</th>
+                <th>Descripción</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -38,25 +33,15 @@
             {% for detalle in object_list %}
             <tr>
                 <td>{{detalle.id}}</td>
-                <td>{{detalle.fecha}}</td>
                 <td>{{detalle.nombre}}</td>
-                <td>{{detalle.monto}}</td>
-                <td>{{detalle.tipo_gasto}}</td>
-                {% if detalle.is_region %}
-                <td style="vertical-align: middle;"><i class="fas fa-check-circle text-success"></i> SI</td>
-                {% else %}
-                <td style="vertical-align: middle;"><i class="fas fa-times-circle text-danger"></i> NO</td>
-                {% endif %}
-                <td>{{detalle.created_at|date:"Y/m/d H:i:s"}}</td>
-                <td>{{detalle.updated_at|date:"Y/m/d H:i:s"}}</td>
+                <td>{{detalle.descripcion}}</td>
                 <td style="vertical-align: middle;">
                     <a class="btn btn-primary btn-sm text-light border border-dark m-1"
-                        href="{% url 'rendiciones:editar_detalle_rendicion' pk_rendicion=pk pk=detalle.id %}"
-                        id="edit"><i class="fas fa-edit"></i></a>
+                        href="{% url 'rendiciones:editar_tipo_de_gasto' detalle.id %}"><i class="fas fa-edit"></i></a>
                     <a class="open-modal btn btn-danger btn-sm text-light border border-dark m-1" data-bs-toggle="modal"
                         data-bs-target="#modal"
-                        data-popup-url="{% url 'rendiciones:predestroy_detalle' pk_rendicion=pk pk=detalle.id %}"
-                        href=""><i class="fas fa-trash"></i> </a>
+                        data-popup-url="{% url 'rendiciones:predestroy_tipo_de_gasto' detalle.id %}"><i
+                            class="fas fa-trash-alt"></i></a>
                 </td>
             </tr>
             {% endfor %}
@@ -67,8 +52,7 @@
     <div class="modal-dialog" notempty='not'>
         <div class="modal-content" notempty='not'>
             <div class="modal-header" notempty='not'>
-                <h5 class="modal-title " id="modalLabel" notempty='not'>¿Desea Eliminar el siguiente detalle de
-                    rendición?:
+                <h5 class="modal-title " id="modalLabel" notempty='not'>¿Desea Eliminar el siguiente tipo de gasto?:
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -97,8 +81,8 @@
                         "</p>";
                     $(".modal-body").append(Datos);
                     $("#delete").click(function () {
-                        window.location.href = "/rendiciones/detalle_rendicion/" +
-                            data["rendicion_id"] + "/destroy/" + data["id"];
+                        window.location.href =
+                            "/rendiciones/tipo_de_gasto/destroy/" + data['id'];
                     })
                 }
             });

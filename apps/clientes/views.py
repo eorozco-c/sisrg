@@ -192,34 +192,34 @@ def destroy(request,pk):
 #             return redirect("clientes:sitios", pk=self.kwargs['pk'])
 #         return super().get(request)
 
-@login_required(login_url="/")
-def predestroy_sitio(request, pk,pk_cliente):
-    if request.user.has_perm('clientes.delete_sitios_cliente'):
-        if request.method == "GET":
-            try:
-                sitio = Sitios_cliente.objects.get(id=pk)
-            except:
-                return redirect("clientes:sitios", pk=pk_cliente)
-            context={
-                'nombre' : sitio.nombre,
-                'direccion': sitio.direccion,
-                'encargado': sitio.encargado,
-                'id': sitio.id,
-            }
-            return JsonResponse(context)
-    return redirect("clientes:sitios", pk=pk_cliente)
+# @login_required(login_url="/")
+# def predestroy_sitio(request, pk,pk_cliente):
+#     if request.user.has_perm('clientes.delete_sitios_cliente'):
+#         if request.method == "GET":
+#             try:
+#                 sitio = Sitios_cliente.objects.get(id=pk)
+#             except:
+#                 return redirect("clientes:sitios", pk=pk_cliente)
+#             context={
+#                 'nombre' : sitio.nombre,
+#                 'direccion': sitio.direccion,
+#                 'encargado': sitio.encargado,
+#                 'id': sitio.id,
+#             }
+#             return JsonResponse(context)
+#     return redirect("clientes:sitios", pk=pk_cliente)
 
-@login_required(login_url="/")
-def destroy_sitio(request, pk,pk_cliente):
-    if request.user.has_perm('clientes.delete_sitios_cliente'):
-        if request.method == "GET":
-            try:
-                sitio = Sitios_cliente.objects.get(id=pk)
-            except:
-                return redirect("clientes:sitios", pk=pk_cliente)
-            if request.user.empresa == sitio.empresa:
-                try:
-                    sitio.delete()
-                except:
-                    messages.success(request,f'No se puede eliminar elemento',extra_tags='danger')
-    return redirect("clientes:sitios", pk=pk_cliente)
+# @login_required(login_url="/")
+# def destroy_sitio(request, pk,pk_cliente):
+#     if request.user.has_perm('clientes.delete_sitios_cliente'):
+#         if request.method == "GET":
+#             try:
+#                 sitio = Sitios_cliente.objects.get(id=pk)
+#             except:
+#                 return redirect("clientes:sitios", pk=pk_cliente)
+#             if request.user.empresa == sitio.empresa:
+#                 try:
+#                     sitio.delete()
+#                 except:
+#                     messages.success(request,f'No se puede eliminar elemento',extra_tags='danger')
+#     return redirect("clientes:sitios", pk=pk_cliente)

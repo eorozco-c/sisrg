@@ -11,7 +11,7 @@ from apps.clientes.models import Cliente
 from apps.estados.models import Nombre_estado
 from apps.usuarios.models import Usuario
 from .models import *
-from .formularios import RendicionDetalleForm
+from .formularios import RendicionDetalleForm, FormularioTipoDeGasto
 import datetime, os, json
 
 # Create your views here.
@@ -39,14 +39,14 @@ class ListaRendiciones(ListView):
         if not fecha_ini or not fecha_fin:
             fecha_ini = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             fecha_fin = datetime.datetime.now().replace(hour=23, minute=59, second=59, microsecond=0)        
-        queryset = Rendicion.objects.filter(updated_at__range=[fecha_ini, fecha_fin],usuario__empresa=self.request.user.empresa)
+        queryset = Rendicion.objects.filter(updated_at__range=[fecha_ini, fecha_fin],usuario__empresa=self.request.user.empresa).exclude(estado__nombre="INICIADO")
         return queryset
 
 @method_decorator(login_required, name='dispatch')
 class CrearRendicion(CreateView):
     model = Rendicion
     template_name = 'rendiciones/formulario.html'
-    fields = ['descripcion', 'usuario', 'cliente', 'encargado', 'sitios_cliente', 'estado']
+    fields = ['descripcion', 'usuario', 'cliente', 'encargado', 'estado']
 
     def get_context_data(self, **kwargs):
         context = super(CrearRendicion, self).get_context_data(**kwargs)
@@ -64,28 +64,8 @@ class CrearRendicion(CreateView):
             rendicion.usuario = Usuario.objects.get(id=self.request.POST.get('usuario'))
             rendicion.cliente = Cliente.objects.get(id=self.request.POST.get('cliente'))
             rendicion.encargado = self.request.POST.get('encargado')
-            rendicion.sitios_cliente = self.request.POST.get('sitios_cliente')
             rendicion.estado = Nombre_estado.objects.get(id=self.request.POST.get('estado'))
-            rendicion.kilometraje_inicial = self.request.POST.get('km_ini')
-            rendicion.kilometraje_final = self.request.POST.get('km_fin')
-            rendicion.img_km_inicial = self.request.FILES.get('img_km_ini')
-            rendicion.img_km_final = self.request.FILES.get('img_km_fin')
             rendicion.save()
-            #save img_km_inicial and img_km_final in media/request.user.empresa/rendiciones
-            media_path = f'media/{str(request.user.empresa)}/rendiciones'
-            if not os.path.exists(media_path):
-                os.makedirs(media_path)
-            #save files into media/empresa/rendiciones
-            if self.request.FILES.get('img_km_ini'):
-                #save into media_path
-                with open(f'{media_path}/{self.request.FILES.get("img_km_ini")}', 'wb+') as destination:
-                    for chunk in self.request.FILES.get('img_km_ini').chunks():
-                        destination.write(chunk)
-            if self.request.FILES.get('img_km_fin'):
-                #save into media_path
-                with open(f'{media_path}/{self.request.FILES.get("img_km_fin")}', 'wb+') as destination:
-                    for chunk in self.request.FILES.get('img_km_fin').chunks():
-                        destination.write(chunk)
             messages.success(self.request, 'Rendición creada correctamente')
             return redirect('rendiciones:index')
         return redirect("master:index")
@@ -97,7 +77,7 @@ def obtiene_sitios(request, pk_cliente):
             return JsonResponse({"sitios": []})
         try:
             cliente = Cliente.objects.get(pk=pk_cliente)
-            sitios = cliente.sitios_cliente_cliente.all()
+            # sitios = cliente.sitios_cliente_cliente.all()
             return JsonResponse({"sitios":list(sitios.values())})
         except Cliente.DoesNotExist:
             return JsonResponse({"sitios": []})
@@ -107,7 +87,7 @@ def obtiene_sitios(request, pk_cliente):
 class EditarRendicion(UpdateView):
     model = Rendicion
     template_name = 'rendiciones/formulario.html'
-    fields = ['descripcion', 'usuario', 'cliente', 'encargado', 'sitios_cliente', 'estado', 'kilometraje_inicial', 'kilometraje_final', 'img_km_inicial', 'img_km_final']
+    fields = ['descripcion', 'usuario', 'cliente', 'encargado','estado']
 
     def get_context_data(self, **kwargs):
         context = super(EditarRendicion, self).get_context_data(**kwargs)
@@ -117,21 +97,15 @@ class EditarRendicion(UpdateView):
         context['usuarios'] = Usuario.objects.filter(empresa=self.request.user.empresa, is_superuser=False)
         context['estados'] = Nombre_estado.objects.all()
         #data for prepopulate form in object
-        print(self.object.sitios_cliente)
         data = json.dumps({
             'descripcion': self.object.descripcion,
             'usuario': self.object.usuario.id,
             'cliente': self.object.cliente.id,
             'encargado': self.object.encargado,
-            'sitios_cliente': self.object.sitios_cliente,
             'estado': self.object.estado.id,
-            'km_ini': self.object.kilometraje_inicial,
-            'km_fin': self.object.kilometraje_final,
+
         })
         context['data'] = data
-        context['img_km_ini'] = self.object.img_km_inicial
-        context['img_km_fin'] = self.object.img_km_final
-
         return context
 
     def post(self, request, *args, **kwargs):
@@ -141,28 +115,8 @@ class EditarRendicion(UpdateView):
             rendicion.usuario = Usuario.objects.get(id=self.request.POST.get('usuario'))
             rendicion.cliente = Cliente.objects.get(id=self.request.POST.get('cliente'))
             rendicion.encargado = self.request.POST.get('encargado')
-            rendicion.sitios_cliente = Sitios_cliente.objects.get(id=self.request.POST.get('sitio'))
             rendicion.estado = Nombre_estado.objects.get(id=self.request.POST.get('estado'))
-            rendicion.kilometraje_inicial = self.request.POST.get('km_ini')
-            rendicion.kilometraje_final = self.request.POST.get('km_fin')
-            rendicion.img_km_inicial = self.request.FILES.get('img_km_ini')
-            rendicion.img_km_final = self.request.FILES.get('img_km_fin')
             rendicion.save()
-            #save img_km_inicial and img_km_final in media/request.user.empresa/rendiciones
-            media_path = f'media/{str(request.user.empresa)}/rendiciones'
-            if not os.path.exists(media_path):
-                os.makedirs(media_path)
-            #save files into media/empresa/rendiciones
-            if self.request.FILES.get('img_km_ini'):
-                #save into media_path
-                with open(f'{media_path}/{self.request.FILES.get("img_km_ini")}', 'wb+') as destination:
-                    for chunk in self.request.FILES.get('img_km_ini').chunks():
-                        destination.write(chunk)
-            if self.request.FILES.get('img_km_fin'):
-                #save into media_path
-                with open(f'{media_path}/{self.request.FILES.get("img_km_fin")}', 'wb+') as destination:
-                    for chunk in self.request.FILES.get('img_km_fin').chunks():
-                        destination.write(chunk)
             messages.success(self.request, 'Rendición editada correctamente')
             return redirect('rendiciones:index')
         return redirect("master:index")
@@ -240,6 +194,7 @@ class CrearDetalleRendicion(CreateView):
             return redirect('rendiciones:detalle_rendicion', pk=self.kwargs['pk_rendicion'])
         return redirect("rendiciones:detalle_rendicion", pk=self.kwargs['pk_rendicion'])
 
+
 @method_decorator(login_required, name='dispatch')
 class EditarDetalleRendicion(UpdateView):
     template_name = 'formularios/generico.html'
@@ -285,3 +240,83 @@ def destroy_detalle(request,pk_rendicion,pk):
             messages.error(request, 'No tiene permisos para eliminar rendiciones')
     return redirect("rendiciones:detalle_rendicion", pk=pk_rendicion)
 
+@method_decorator(login_required, name='dispatch')
+class ListTipoDeGasto(ListView):
+    model = TipoDeGasto
+    template_name = 'rendiciones/tipo_de_gasto_list.html'
+    context_object_name = 'tipos_de_gasto'
+    
+    def get(self, request):
+        if self.request.user.has_perm('rendiciones.view_tipodegasto'):
+            return super().get(request)
+        return redirect("master:index")
+
+    def get_context_data(self, **kwargs):
+        context = super(ListTipoDeGasto, self).get_context_data(**kwargs)
+        context['appname'] = "tipos_de_gasto"
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class CrearTipoDeGasto(CreateView):
+    form_class = FormularioTipoDeGasto
+    template_name = 'formularios/generico.html'
+    success_url: reverse_lazy('rendiciones:tipo_de_gasto')
+
+    def get_context_data(self, **kwargs):
+        context = super(CrearTipoDeGasto, self).get_context_data(**kwargs)
+        context['legend'] = "Crear Tipo de Gasto"
+        context['appname'] = "tipo_de_gasto"
+        return context
+
+    def form_valid(self, form):
+        if self.request.user.has_perm('rendiciones.add_tipodegasto'):
+            form.save()
+            messages.success(self.request, 'Tipo de gasto creado correctamente')
+            return redirect('rendiciones:tipo_de_gasto')
+        return redirect("rendiciones:tipo_de_gasto")
+
+
+@method_decorator(login_required, name='dispatch')
+class EditarTipoDeGasto(UpdateView):
+    template_name = 'formularios/generico.html'
+    model = TipoDeGasto
+    form_class = FormularioTipoDeGasto
+
+    def get_context_data(self, **kwargs):
+        context = super(EditarTipoDeGasto, self).get_context_data(**kwargs)
+        context['legend'] = "Editar Tipo de Gasto"
+        context['appname'] = "tipo_de_gasto"
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return redirect("rendiciones:tipo_de_gasto")
+
+@login_required(login_url="/")
+def predestroy_tipo_de_gasto(request, pk):
+    if request.method == "GET":
+        try:
+            tipo_de_gasto = TipoDeGasto.objects.get(pk=pk)
+        except:
+            return redirect("rendiciones:tipo_de_gasto")
+        context={
+            'id' : tipo_de_gasto.id,
+            'nombre': tipo_de_gasto.nombre,
+            'descripcion': tipo_de_gasto.descripcion,
+        }
+        return JsonResponse(context)
+    return redirect("rendiciones:tipo_de_gasto")
+
+
+@login_required(login_url="/")
+def destroy_tipo_de_gasto(request,pk):
+    if request.method == "GET":
+        if request.user.is_superuser:
+            try:
+                tipo_de_gasto = TipoDeGasto.objects.get(pk=pk)
+            except:
+                return redirect("rendiciones:tipo_de_gasto")
+            tipo_de_gasto.delete()
+        else:
+            messages.error(request, 'No tiene permisos para eliminar tipos de gasto')
+    return redirect("rendiciones:tipo_de_gasto")
